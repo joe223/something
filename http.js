@@ -8,19 +8,15 @@ let $http = {
     },
 
     get (url, options) {
-        let defaultOptions = {
-            header: {}
-        };
         let xhr = new XMLHttpRequest();
-        Object.assign(defaultOptions, options);
         xhr.open('get', url, true);
-        this.setHeaders(xhr, defaultOptions.header);
+        this.setHeaders(xhr, options);
         xhr.send(null);
         return new Promise((resolve, reject) => {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        resolve(this.getJson(xhr));
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(this.json(xhr));
                     } else {
                         reject(xhr);
                     }
@@ -31,20 +27,17 @@ let $http = {
 
     post (url, data, options) {
         let defaultOptions = {
-            header: {
-                'Content-Type': 'application/json;charset=UTF-8',
-            }
+            'Content-Type': 'application/json;charset=UTF-8',
         };
-        Object.assign(defaultOptions, options);
-        let xhr = new XMLHttpRequest(defaultOptions.header);
+        let xhr = new XMLHttpRequest();
         xhr.open('post', url, true);
-        this.setHeaders(xhr, );
+        this.setHeaders(xhr, Object.assign(defaultOptions, options));
         xhr.send(JSON.stringify(data));
         return new Promise((resolve, reject) => {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        resolve(this.getJson(xhr));
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(this.json(xhr));
                     } else {
                         reject(xhr);
                     }
@@ -53,7 +46,28 @@ let $http = {
         });
     },
 
-    getJson (res) {
+    delete (url, data, options) {
+        let defaultOptions = {
+            'Content-Type': 'application/json;charset=UTF-8',
+        };
+        let xhr = new XMLHttpRequest();
+        xhr.open('delete', url, true);
+        this.setHeaders(xhr, Object.assign(defaultOptions, options));
+        xhr.send(JSON.stringify(data));
+        return new Promise((resolve, reject) => {
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(this.json(xhr));
+                    } else {
+                        reject(xhr);
+                    }
+                }
+            }
+        });
+    },
+
+    json (res) {
         let response = {};
         response.response = res.response;
         response.timeout = res.timeout;
