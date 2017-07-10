@@ -3,10 +3,13 @@
  */
 export default function (url, resolveFnName) {
     let script = document.createElement('script');
-    resolveFnName === undefined && (resolveFnName = 'jsonp' + Math.random());
+    resolveFnName === undefined && (resolveFnName = 'jsonp' + Math.random().toString(36).substr(2));
     return new Promise((resolve, reject) => {
+        url += `&callback=${ resolveFnName }`;
         document.body.appendChild(script);
-        script.setAttribute('src', url);
+        script.src = url;
+        script.type = 'text/javascript';
+        script.async = true;
         script.onerror = function (e) {
             script.onerror = null;
             document.body.removeChild(script);
