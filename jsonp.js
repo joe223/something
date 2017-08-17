@@ -5,7 +5,7 @@ export default function (url, resolveFnName) {
     let script = document.createElement('script');
     resolveFnName === undefined && (resolveFnName = 'jsonp' + Math.random().toString(36).substr(2));
     return new Promise((resolve, reject) => {
-        url += `&callback=${ resolveFnName }`;
+        url += `?callback=${ resolveFnName }`;
         document.body.appendChild(script);
         script.src = url;
         script.type = 'text/javascript';
