@@ -7,12 +7,20 @@ Function.prototype.bind1 = function (context) {
 }
 
 // bind without apply
-Function.prototype.bind2 = function (context) {
+
+// bind without apply
+Function.prototype.bind2 = function (context, args) {
     let that = this
     let id = Symbol('fn')
+    let vals = []
+    vals.concat(args ? args : [])
+    context = context || window
     return function () {
         context[id] = that
-        let val = context[id]()
+        if (arguments.length > 1) {
+             vals = vals.concat(Array.prototype.slice.call(arguments))
+        }
+        let val = eval('context[id](' + vals.reduce((res, item, index, arr) => {return res + 'vals[' + index + ']' + (index === arr.length - 1 ? '' : ',')}, '') + ')')
         delete context[id]
         return val
     }
