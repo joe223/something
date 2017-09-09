@@ -17,15 +17,19 @@ Promise.prototype.catch = function (reject) {
     this.reject = reject || function () {};
     return this;
 }
+Promise.prototype.resolve = function () {}
+Promise.prototype.reject = function (err) {
+    console.error(err);
+}
 
 
 // Promise.all
 
-function all (list) {
+Promise.all = function (list) {
     const taskList = new Array(list.length);
     let count = list.length;        // in case res === undefined
     
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         list.map((item, index, arr) => {
             list[index].then(res => {
                 taskList[index] = res;
@@ -37,11 +41,28 @@ function all (list) {
     });
 }
 
+// Promise.race
+
+Promise.race = function (list) {
+    return new Promise(function (resolve, reject) {
+        list.map((item, index, arr) => {
+            list[index].then(res => {
+                if (this.status === 'pending') {
+                    this.status = 'fulfilled';               
+                    resolve(res);
+                }
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    });
+}
+
 // test code
 let list = [
     new Promise((resolve, reject) => {
         setTimeout(res => {
-            resolve()
+            resolve({name: 'joe'})
         }, 1000);
     }), 
     new Promise((resolve, reject) => {
@@ -51,13 +72,19 @@ let list = [
     }),
     new Promise((resolve, reject) => {
         setTimeout(res => {
-            resolve('3 error')          // reject cause error
+            resolve('3 done')          // reject cause error
         }, 2000);
     }),
 ];
 
-all(list).then(res => {
+Promise.all(list).then(res => {
     console.log('all result:', res);
+}).catch(err => {
+    console.error('err:', err);
+});
+
+Promise.race(list).then(res => {
+    console.log('race result:', res);
 }).catch(err => {
     console.error('err:', err);
 })
