@@ -7,8 +7,6 @@ Function.prototype.bind1 = function (context) {
 }
 
 // bind without apply
-
-// bind without apply
 Function.prototype.bind2 = function (context, args) {
     let that = this
     let id = Symbol('fn')
