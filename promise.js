@@ -64,10 +64,8 @@ let a = new Promise((resolve, reject) => {
         resolve('resolve')
     }, 0)
 }).then((e) => {
-    // console.log(e);
+    console.log(e);
 }).catch(err => {
-    // console.error(err);
-})
-
-console.log(a)
+    console.error(err);
+});
 
