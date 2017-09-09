@@ -17,8 +17,11 @@ Promise.prototype.catch = function (reject) {
     this.reject = reject || function () {};
     return this;
 }
-Promise.prototype.resolve = function () {}
+Promise.prototype.resolve = function () {
+    this.status = 'fulfilled';    
+}
 Promise.prototype.reject = function (err) {
+    this.status = 'rejected';    
     console.error(err);
 }
 
@@ -48,7 +51,7 @@ Promise.race = function (list) {
         list.map((item, index, arr) => {
             list[index].then(res => {
                 if (this.status === 'pending') {
-                    this.status = 'fulfilled';               
+                    this.status = 'fulfilled';            
                     resolve(res);
                 }
             }).catch(err => {
